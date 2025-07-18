@@ -12,6 +12,17 @@ public class InteractableObject : MonoBehaviour
         return ItemName;
     }
 
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Mouse0) && playerInRange && SelectionManager.Instance.onTarget)
+        {
+            Debug.Log("item added to inventory");
+
+            Destroy(gameObject);
+        }
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player")) // if the player enters the area and not any other entity
