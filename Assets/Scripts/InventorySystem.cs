@@ -38,7 +38,7 @@ public class InventorySystem : MonoBehaviour
     void Start()
     {
         isShiftLock = false;
-
+        isFull = false;
         PopulateSlotList();
     }
  
@@ -75,25 +75,50 @@ public class InventorySystem : MonoBehaviour
     }
 
 
-    public void AddToInventory(string ItemName)
+    public void AddToInventory(string itemName)
     {
-        if (CheckIfFull()) 
-        {
-            Debug.Log("Inventory is full");
-        }
-        else
-        {
-            whatSlotToEquip = FindNextEmptySlot();
-        }
+
+        whatSlotToEquip = FindNextEmptySlot();
+
+        itemToAdd = (GameObject)Instantiate(Resources.Load<GameObject>(itemName), whatSlotToEquip.transform.position, whatSlotToEquip.transform.rotation);
+        itemToAdd.transform.SetParent(whatSlotToEquip.transform);
+
+        itemList.Add(itemName);
     }
 
     public bool CheckIfFull()
     {
+        int count = 0;
+
+        foreach(GameObject slot in slotList) 
+        {
+            if (slot.transform.childCount > 0)
+            {
+                count += 1;
+            }
+        }
         
+        if (count == 5)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
  
     public GameObject FindNextEmptySlot()
     {
+        foreach (GameObject slot in slotList)
+        {
+            if (slot.transform.childCount == 0)
+            {
+                return slot;
+            }
 
+        }
+        return new GameObject();
     }
+
 }
