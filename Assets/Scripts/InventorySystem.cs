@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
  
 public class InventorySystem : MonoBehaviour
 {
@@ -21,6 +22,17 @@ public class InventorySystem : MonoBehaviour
     public bool isShiftLock;
 
     public bool isFull; // check if inventory is full
+
+        // --- UI & Hotbar --- //
+    public GameObject hotbar;                  // Used for slot highlighting (e.g. Slot1, Slot2...)
+
+    public Sprite defaultSlotSprite;
+    public Sprite selectedSlotSprite;
+
+    public List<GameObject> quickSlots = new List<GameObject>();
+    public List<string> quickSlotItemList = new List<string>();
+
+    private int currentSelectedIndex = -1;
  
     private void Awake()
     {
@@ -56,7 +68,12 @@ public class InventorySystem : MonoBehaviour
  
     void Update()
     {
- 
+        HandleSlotInput();
+        HandleCursorToggle();
+    }
+
+    void HandleCursorToggle()
+    {
         if (Input.GetKeyDown(KeyCode.LeftAlt) && !isShiftLock)
         {
  
@@ -74,6 +91,42 @@ public class InventorySystem : MonoBehaviour
         }
     }
 
+    void HandleSlotInput()
+    {
+        if (Input.GetKeyDown(KeyCode.Alpha1)) SelectQuickSlot(1);
+        else if (Input.GetKeyDown(KeyCode.Alpha2)) SelectQuickSlot(2);
+        else if (Input.GetKeyDown(KeyCode.Alpha3)) SelectQuickSlot(3);
+        else if (Input.GetKeyDown(KeyCode.Alpha4)) SelectQuickSlot(4);
+        else if (Input.GetKeyDown(KeyCode.Alpha5)) SelectQuickSlot(5);
+    }
+
+    void SelectQuickSlot(int number)
+    {
+        int index = number - 1;
+
+        // Deselect previously selected slot
+        if (currentSelectedIndex != -1)
+        {
+            Transform prevSlot = hotbar.transform.Find("Slot" + (currentSelectedIndex + 1));
+            if (prevSlot != null)
+            {
+                Image prevImage = prevSlot.GetComponent<Image>();
+                if (prevImage != null)
+                    prevImage.sprite = defaultSlotSprite;
+            }
+        }
+
+        // Select new slot
+        Transform currentSlot = hotbar.transform.Find("Slot" + number);
+        if (currentSlot != null)
+        {
+            Image currentImage = currentSlot.GetComponent<Image>();
+            if (currentImage != null)
+                currentImage.sprite = selectedSlotSprite;
+        }
+
+        currentSelectedIndex = index;
+    }
 
     public void AddToInventory(string itemName)
     {
@@ -120,5 +173,7 @@ public class InventorySystem : MonoBehaviour
         }
         return new GameObject();
     }
+
+    
 
 }
